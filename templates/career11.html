@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Course Recommendations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1e3dd;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        label, input, button {
+            font-size: 1rem;
+            margin: 10px 0;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .courses-list, .colleges-list {
+            display: none;
+            margin-top: 20px;
+        }
+        .courses-list ul, .colleges-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .courses-list li, .colleges-list li {
+            margin-bottom: 10px;
+        }
+        .add-to-cart {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .add-to-cart:hover {
+            background-color: #0056b3;
+        }
+
+        /* Header Section */
+        header {
+            background-color: #bccad6;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667292;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav ul li a {
+            font-size: 1rem;
+            color: #667292;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #4CAF50;
+        }
+
+        /* Cart Section */
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #007bff;
+        }
+
+        .cart-box {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 200px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-box ul {
+            list-style: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .cart-box li {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cart-box .empty-cart {
+            text-align: center;
+            font-style: italic;
+            color: #888;
+        }
+
+        /* Red "X" button */
+        .remove-item {
+            color: red;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">DreamPath</div>
+        <div class="cart-icon" onclick="toggleCart()">🛒</div>
+        <div class="cart-box" id="cart-box">
+            <h3>Your Cart</h3>
+            <ul id="cart-ul">
+                <li class="empty-cart">Your cart is empty.</li>
+            </ul>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>Career Course Finder</h1>
+        <label for="skills-input">Enter Your Skills and Interests (separated by commas):</label>
+        <input type="text" id="skills-input" placeholder="e.g., Problem-solving, Logical-thinking, Science, Technology">
+        <button onclick="findCourses()">Submit</button>
+
+        <div class="courses-list" id="courses-list">
+            <h2>Recommended Courses</h2>
+            <ul id="course-ul"></ul>
+        </div>
+
+        <div class="colleges-list" id="colleges-list">
+            <h2>Colleges for Selected Course</h2>
+            <ul id="college-ul"></ul>
+        </div>
+    </div>
+
+
+    <script>
+        const courses = {
+            "Web Development": {
+    skills: ["HTML", "CSS", "JavaScript", "Responsive Design", "Web Programming", "UI/UX"],
+    colleges: [
+        "Arena Animation, New Delhi, Delhi",
+        "Aptech, Mumbai, Maharashtra",
+        "UpGrad, Bengaluru, Karnataka",
+        "NIIT, New Delhi, Delhi",
+        "Wigan & Leigh College, New Delhi, Delhi",
+        "Web Designing Academy, Bengaluru, Karnataka"
+    ]
+},
+           "Cybersecurity": {
+    skills: ["Problem-solving", "Analytical", "Critical-thinking", "Security", "Networks", "Systems", "Cybersecurity"],
+    colleges: [
+        "Indian School of Ethical Hacking, Kolkata, West Bengal",
+        "National Institute of Electronics & Information Technology, New Delhi, Delhi",
+        "Simplilearn, Bengaluru, Karnataka",
+        "EC-Council, New Delhi, Delhi",
+        "TalentedIT, Hyderabad, Telangana",
+        "TCS iON, Mumbai, Maharashtra"
+    ]
+},
+
+"Data Science": {
+    skills: ["Data Analysis", "Statistics", "Python", "Machine Learning", "Data Visualization", "Problem-solving"],
+    colleges: [
+        "Great Learning, Bengaluru, Karnataka",
+        "Data Science Academy, Mumbai, Maharashtra",
+        "UpGrad, Bengaluru, Karnataka",
+        "Simplilearn, Bengaluru, Karnataka",
+        "Indian Institute of Technology (IIT), Mumbai, Maharashtra",
+        "Manipal University, Jaipur, Rajasthan"
+    ]
+},
+
+
+"Cloud Computing": {
+    "skills": ["Cloud Infrastructure", "AWS", "Azure", "Google Cloud", "Virtualization", "Networking"],
+    "colleges": [
+        "Simplilearn, Bengaluru, Karnataka",
+        "UpGrad, Bengaluru, Karnataka",
+        "Indian Institute of Technology (IIT), Delhi, Delhi",
+        "Edureka, Bengaluru, Karnataka",
+        "Microsoft Learn, Bengaluru, Karnataka",
+        "AWS Training and Certification, New Delhi, Delhi"
+    ]
+},
+
+"Artificial Intelligence": {
+    "skills": ["Python", "AI Algorithms", "Neural Networks", "Data Science", "Machine Learning", "Deep Learning"],
+    "colleges": [
+        "Indian Institute of Technology (IIT), Kanpur, Uttar Pradesh",
+        "UpGrad, Bengaluru, Karnataka",
+        "Great Learning, Bengaluru, Karnataka",
+        "Coursera, Online",
+        "Simplilearn, Bengaluru, Karnataka",
+        "University of California, Berkeley, USA"
+    ]
+},
+
+"App Development": {
+    "skills": ["Mobile Development", "Android", "iOS", "Java", "Swift", "UI/UX Design"],
+    "colleges": [
+        "Simplilearn, Bengaluru, Karnataka",
+        "UpGrad, Bengaluru, Karnataka",
+        "Coursera, Online",
+        "Udemy, Online",
+        "App Development Institute, Mumbai, Maharashtra",
+        "CodeAcademy, Online"
+    ]
+},
+
+"Financial Accounting": {
+    "skills": ["Accounting", "Financial Statements", "Excel", "Taxation", "Cost Accounting", "Bookkeeping"],
+    "colleges": [
+        "Institute of Chartered Accountants of India (ICAI), New Delhi, Delhi",
+        "Shivaji University, Kolhapur, Maharashtra",
+        "St. Xavier's College, Mumbai, Maharashtra",
+        "University of Delhi, Delhi, Delhi",
+        "Symbiosis College of Arts and Commerce, Pune, Maharashtra",
+        "Amity University, Noida, Uttar Pradesh"
+    ]
+},
+
+"Game Development": {
+    "skills": ["Game Design", "Unity", "C#", "Animation", "Game Mechanics", "Storytelling"],
+    "colleges": [
+        "University of California, Los Angeles, USA",
+        "National Institute of Design, Ahmedabad, Gujarat",
+        "VIT University, Vellore, Tamil Nadu",
+        "Bangalore Institute of Technology, Bengaluru, Karnataka",
+        "Arena Animation, New Delhi, Delhi",
+        "UPES, Dehradun, Uttarakhand"
+    ]
+},
+
+"Software Engineering": {
+    "skills": ["Programming", "Software Development", "Problem-solving", "Algorithms", "Data Structures", "Systems Engineering"],
+    "colleges": [
+        "Indian Institute of Technology (IIT), Mumbai, Maharashtra",
+        "UpGrad, Bengaluru, Karnataka",
+        "VIT University, Vellore, Tamil Nadu",
+        "Manipal University, Jaipur, Rajasthan",
+        "BITS Pilani, Pilani, Rajasthan",
+        "NIIT, New Delhi, Delhi"
+    ]
+},
+
+"Networking": {
+    "skills": ["Networking", "IP Addressing", "Routers", "Switching", "Security", "Troubleshooting"],
+    "colleges": [
+        "Cisco Networking Academy, Online",
+        "CompTIA, Online",
+        "Jetking, Mumbai, Maharashtra",
+        "Aptech, Mumbai, Maharashtra",
+        "NIIT, New Delhi, Delhi",
+        "Simplilearn, Bengaluru, Karnataka"
+    ]
+},
+
+"Embedded Systems": {
+    "skills": ["Embedded Programming", "Microcontrollers", "C/C++", "System Design", "Hardware", "IoT"],
+    "colleges": [
+        "Indian Institute of Technology (IIT), Kanpur, Uttar Pradesh",
+        "UpGrad, Bengaluru, Karnataka",
+        "VIT University, Vellore, Tamil Nadu",
+        "Bangalore Institute of Technology, Bengaluru, Karnataka",
+        "MIT Academy of Engineering, Pune, Maharashtra",
+        "Sree Chitra Tirunal Institute for Medical Sciences, Thiruvananthapuram, Kerala"
+    ]
+},
+
+"Robotics": {
+    "skills": ["Robotic Systems", "Automation", "C++, Python", "AI Integration", "Mechanical Design", "Control Systems"],
+    "colleges": [
+        "Indian Institute of Technology (IIT), Bombay, Maharashtra",
+        "UpGrad, Bengaluru, Karnataka",
+        "VIT University, Vellore, Tamil Nadu",
+        "Manipal University, Jaipur, Rajasthan",
+        "SRM Institute of Science and Technology, Chennai, Tamil Nadu",
+        "University of Maryland, USA"
+    ]
+},
+
+
+"Pharmaceutical Science": {
+    "skills": ["Pharmacology", "Chemistry", "Lab Techniques", "Research", "Drug Development", "Biology"],
+    "colleges": [
+        "National Institute of Pharmaceutical Education and Research (NIPER), Mohali, Punjab",
+        "Jamia Millia Islamia, New Delhi, Delhi",
+        "Amity University, Noida, Uttar Pradesh",
+        "Manipal College of Pharmaceutical Sciences, Manipal, Karnataka",
+        "BITS Pilani, Pilani, Rajasthan",
+        "University of Delhi, Delhi, Delhi"
+    ]
+},
+
+"Interior Designing": {
+    "skills": ["Design", "Space Planning", "3D Modelling", "Furniture Design", "Decor", "Creativity"],
+    "colleges": [
+        "National Institute of Design, Ahmedabad, Gujarat",
+        "Pearl Academy, New Delhi, Delhi",
+        "Shiv Nadar University, Noida, Uttar Pradesh",
+        "UpGrad, Bengaluru, Karnataka",
+        "Jannat Academy, Mumbai, Maharashtra",
+        "JJ School of Art, Mumbai, Maharashtra"
+    ]
+},
+
+"Fashion Designing": {
+    "skills": ["Fashion Illustration", "Pattern Making", "Textiles", "Sewing", "Creativity", "Trend Analysis"],
+    "colleges": [
+        "National Institute of Fashion Technology (NIFT), New Delhi, Delhi",
+        "Pearl Academy, New Delhi, Delhi",
+        "UPES, Dehradun, Uttarakhand",
+        "MIT Institute of Design, Pune, Maharashtra",
+        "Shivaji University, Kolhapur, Maharashtra",
+        "JD Institute of Fashion Technology, Mumbai, Maharashtra"
+    ]
+},
+
+
+"Media Studies": {
+    "skills": ["Media Production", "Journalism", "Content Creation", "Editing", "Communication", "Film Production"],
+    "colleges": [
+        "Jamia Millia Islamia, New Delhi, Delhi",
+        "Film and Television Institute of India (FTII), Pune, Maharashtra",
+        "Symbiosis Institute of Media and Communication, Pune, Maharashtra",
+        "Delhi University, Delhi, Delhi",
+        "Manipal University, Jaipur, Rajasthan",
+        "University of Mumbai, Mumbai, Maharashtra"
+    ]
+},
+
+"Event Management": {
+    "skills": ["Event Planning", "Logistics", "Marketing", "Team Management", "Creativity", "Budgeting"],
+    "colleges": [
+        "Indian School of Business, New Delhi, Delhi",
+        "UpGrad, Bengaluru, Karnataka",
+        "Manipal University, Jaipur, Rajasthan",
+        "Amity University, Noida, Uttar Pradesh",
+        "Sikkim Manipal University, Gangtok, Sikkim",
+        "International Institute of Event Management, Mumbai, Maharashtra"
+    ]
+},
+
+"Fashion Designing": {
+    "skills": ["Creativity", "Fashion Trends", "Sketching", "Textile Design", "Color Theory", "Sewing", "Pattern Making"],
+    "colleges": [
+        "National Institute of Fashion Technology (NIFT), New Delhi, Delhi",
+        "Pearl Academy, New Delhi, Delhi",
+        "Institute of Fashion Design and Technology, Mumbai, Maharashtra",
+        "JD Institute of Fashion Technology, New Delhi, Delhi",
+        "Amity University, Noida, Uttar Pradesh",
+        "Symbiosis Institute of Design, Pune, Maharashtra"
+    ]
+},
+
+"Interior Designing": {
+    "skills": ["Creativity", "Space Planning", "Color Theory", "Sketching", "3D Modeling", "Furniture Design", "Architecture"],
+    "colleges": [
+        "National Institute of Design, Ahmedabad, Gujarat",
+        "Pearl Academy, New Delhi, Delhi",
+        "Raffles Design International, Mumbai, Maharashtra",
+        "Bharati Vidyapeeth University, Pune, Maharashtra",
+        "JNAFAU, Hyderabad, Telangana",
+        "SID, Pune, Maharashtra"
+    ]
+},
+
+"Hotel Management": {
+    "skills": ["Hospitality", "Management", "Customer Service", "Event Planning", "Communication", "Organization"],
+    "colleges": [
+        "Institute of Hotel Management, Mumbai, Maharashtra",
+        "Welcomgroup Graduate School of Hotel Administration, Manipal, Karnataka",
+        "Institute of Hotel Management, Chandigarh, Punjab",
+        "Amity University, Noida, Uttar Pradesh",
+        "Oberoi Centre of Learning and Development, New Delhi, Delhi",
+        "RITM, Bengaluru, Karnataka"
+    ]
+},
+
+"Journalism and Mass Communication": {
+    "skills": ["Writing", "Communication", "Editing", "Research", "Public Relations", "Social Media", "Video Production"],
+    "colleges": [
+        "Indian Institute of Mass Communication, New Delhi, Delhi",
+        "Symbiosis Institute of Media and Communication, Pune, Maharashtra",
+        "Jamia Millia Islamia, New Delhi, Delhi",
+        "University of Mumbai, Mumbai, Maharashtra",
+        "Delhi University, New Delhi, Delhi",
+        "Apeejay Institute of Mass Communication, New Delhi, Delhi"
+    ]
+},
+
+"Event Management": {
+   skills: ["Planning", "Organizing", "Creativity", "Coordination", "Marketing", "Communication"],
+    colleges: [
+        "National Academy of Event Management & Development, Mumbai, Maharashtra",
+        "Event Management Development Institute, Mumbai, Maharashtra",
+        "Apeejay Institute of Management, New Delhi, Delhi",
+        "Institute of Event Management, Delhi, Delhi",
+        "International Institute of Event Management, Mumbai, Maharashtra",
+        "Indian School of Hospitality, Gurgaon, Haryana"
+    ]
+},
+
+"Travel and Tourism Management": {
+    "skills": ["Tourism", "Planning", "Customer Service", "Communication", "Hospitality", "Tour Operations"],
+    "colleges": [
+        "Institute of Tourism and Travel Management, New Delhi, Delhi",
+        "Welcomgroup Graduate School of Hotel Administration, Manipal, Karnataka",
+        "Indira Gandhi National Open University (IGNOU), New Delhi, Delhi",
+        "Apex College of Tourism, Jaipur, Rajasthan",
+        "Institute of Travel and Tourism Studies, New Delhi, Delhi",
+        "IATA Training Center, Mumbai, Maharashtra"
+    ]
+},
+
+"Animation and Multimedia": {
+    "skills": ["3D Animation", "Modeling", "Design", "Video Editing", "Graphic Design", "VFX", "Storytelling"],
+    "colleges": [
+        "Arena Animation, New Delhi, Delhi",
+        "Maya Academy of Advanced Cinematics, New Delhi, Delhi",
+        "National Institute of Design, Ahmedabad, Gujarat",
+        "Jadavpur University, Kolkata, West Bengal",
+        "Film and Television Institute of India, Pune, Maharashtra",
+        "UpGrad, Bengaluru, Karnataka"
+    ]
+},
+
+"Fine Arts": {
+    "skills": ["Drawing", "Sketching", "Painting", "Sculpture", "Creative Thinking", "Art Techniques"],
+    "colleges": [
+        "College of Art, New Delhi, Delhi",
+        "J.J. School of Arts, Mumbai, Maharashtra",
+        "Chandigarh University, Chandigarh, Punjab",
+        "Banaras Hindu University, Varanasi, Uttar Pradesh",
+        "University of Delhi, New Delhi, Delhi",
+        "Rajasthan School of Arts, Jaipur, Rajasthan"
+    ]
+},
+
+"Physical Education": {
+    "skills": ["Fitness", "Athletics", "Coaching", "Teamwork", "Sports", "Health"],
+    "colleges": [
+        "Lakshmibai National Institute of Physical Education, Gwalior, Madhya Pradesh",
+        "National Institute of Sports, Patiala, Punjab",
+        "Tata Institute of Social Sciences, Mumbai, Maharashtra",
+        "Guru Nanak Dev University, Amritsar, Punjab",
+        "St. Xavier’s College, Kolkata, West Bengal",
+        "Amity University, Noida, Uttar Pradesh"
+    ]
+},
+
+"Yoga": {
+    "skills": ["Meditation", "Health", "Fitness", "Discipline", "Flexibility", "Breathing Techniques", "Spirituality"],
+    "colleges": [
+        "The Yoga Institute, Mumbai, Maharashtra",
+        "Bihar School of Yoga, Munger, Bihar",
+        "SVYASA Yoga University, Bengaluru, Karnataka",
+        "Patanjali International Yoga Foundation, Haridwar, Uttarakhand",
+        "International Centre for Yoga Education and Research, Chennai, Tamil Nadu",
+        "Kaivalyadhama Institute of Yoga, Lonavala, Maharashtra"
+    ]
+},
+
+"Bachelor of Business Administration (BBA)": {
+    "skills": ["Leadership", "Management", "Communication", "Strategy", "Marketing", "Finance", "Organization"],
+    "colleges": [
+        "Shaheed Sukhdev College of Business Studies, New Delhi, Delhi",
+        "NMIMS University, Mumbai, Maharashtra",
+        "Christ University, Bengaluru, Karnataka",
+        "St. Xavier's College, Mumbai, Maharashtra",
+        "Symbiosis Centre for Management Studies, Pune, Maharashtra",
+        "Amity University, Noida, Uttar Pradesh"
+    ]
+},
+
+"Bachelor of Computer Applications (BCA)": {
+    "skills": ["Programming", "Software Development", "Problem-solving", "Database Management", "Networking"],
+    "colleges": [
+        "Indraprastha University, New Delhi, Delhi",
+        "University of Mumbai, Mumbai, Maharashtra",
+        "St. Xavier's College, Kolkata, West Bengal",
+        "Symbiosis Institute of Computer Studies, Pune, Maharashtra",
+        "Banasthali Vidyapith, Jaipur, Rajasthan",
+        "Hindu College, New Delhi, Delhi"
+    ]
+},
+
+"Bachelor of Science in Nursing (B.Sc Nursing)": {
+    "skills": ["Healthcare", "Patient Care", "Medical Knowledge", "Critical Thinking", "Communication"],
+    "colleges": [
+        "All India Institute of Medical Sciences, New Delhi, Delhi",
+        "Manipal College of Nursing, Manipal, Karnataka",
+        "Christian Medical College, Vellore, Tamil Nadu",
+        "Banaras Hindu University, Varanasi, Uttar Pradesh",
+        "University of Mumbai, Mumbai, Maharashtra",
+        "Jamia Hamdard University, New Delhi, Delhi"
+    ]
+},
+
+"Bachelor of Dental Surgery (BDS)": {
+    "skills": ["Dental Skills", "Problem-solving", "Clinical Skills", "Medical Knowledge", "Patient Interaction"],
+    "colleges": [
+        "Maulana Azad Institute of Dental Sciences, New Delhi, Delhi",
+        "Manipal College of Dental Sciences, Manipal, Karnataka",
+        "KLE Academy of Higher Education & Research, Belagavi, Karnataka",
+        "Bangalore Institute of Dental Sciences, Bengaluru, Karnataka",
+        "Dr. D.Y. Patil University, Navi Mumbai, Maharashtra",
+        "A.J. Institute of Dental Sciences, Mangalore, Karnataka"
+    ]
+},
+
+"Bachelor of Hotel Management (BHM)": {
+    "skills": ["Hospitality", "Customer Service", "Management", "Food & Beverage", "Event Planning"],
+    "colleges": [
+        "Institute of Hotel Management, Delhi, Delhi",
+        "Welcomgroup Graduate School of Hotel Administration, Manipal, Karnataka",
+        "Indian Institute of Hotel Management, Kolkata, West Bengal",
+        "Shivaji University, Kolhapur, Maharashtra",
+        "Lovely Professional University, Jalandhar, Punjab",
+        "Hotel Management Institute, Pune, Maharashtra"
+    ]
+},
+
+"Bachelor of Science in Agriculture (B.Sc Agriculture)": {
+    "skills": ["Agronomy", "Soil Science", "Farming", "Horticulture", "Crop Production", "Agricultural Engineering"],
+    "colleges": [
+        "Indian Agricultural Research Institute, New Delhi, Delhi",
+        "Punjab Agricultural University, Ludhiana, Punjab",
+        "University of Agricultural Sciences, Bengaluru, Karnataka",
+        "Tamil Nadu Agricultural University, Coimbatore, Tamil Nadu",
+        "Banaras Hindu University, Varanasi, Uttar Pradesh",
+        "Govind Ballabh Pant University of Agriculture and Technology, Pantnagar, Uttarakhand"
+    ]
+},
+
+"Bachelor of Arts (BA) in Psychology": {
+    "skills": ["Psychological Analysis", "Counseling", "Mental Health", "Research", "Communication"],
+    "colleges": [
+        "University of Delhi, New Delhi, Delhi",
+        "Jamia Millia Islamia, New Delhi, Delhi",
+        "Banaras Hindu University, Varanasi, Uttar Pradesh",
+        "Christ University, Bengaluru, Karnataka",
+        "Mumbai University, Mumbai, Maharashtra",
+        "Amity University, Noida, Uttar Pradesh"
+    ]
+},
+
+"Bachelor of Arts (BA) in English Literature": {
+    "skills": ["Literature", "Writing", "Analysis", "Communication", "Critical Thinking"],
+    "colleges": [
+        "St. Stephen's College, New Delhi, Delhi",
+        "Delhi University, New Delhi, Delhi",
+        "Presidency University, Kolkata, West Bengal",
+        "Lady Shri Ram College, New Delhi, Delhi",
+        "Fergusson College, Pune, Maharashtra",
+        "University of Mumbai, Mumbai, Maharashtra"
+    ]
+},
+
+"Bachelor of Science in Environmental Science (B.Sc Environmental Science)": {
+    "skills": ["Environmental Management", "Sustainability", "Research", "Ecology", "Conservation"],
+    "colleges": [
+        "Banaras Hindu University, Varanasi, Uttar Pradesh",
+        "University of Delhi, New Delhi, Delhi",
+        "Christ University, Bengaluru, Karnataka",
+        "Indian Institute of Technology, Delhi, Delhi",
+        "Jadavpur University, Kolkata, West Bengal",
+        "University of Mumbai, Mumbai, Maharashtra"
+    ]
+},
+
+"Bachelor of Business Administration in Aviation (BBA Aviation)": {
+    "skills": ["Aviation Management", "Customer Service", "Communication", "Travel Planning", "Airline Operations"],
+    "colleges": [
+        "Indira Gandhi Institute of Aeronautics, New Delhi, Delhi",
+        "Capt. Sahil Khurana Aviation Academy, Mumbai, Maharashtra",
+        "Airline Academy of India, Hyderabad, Telangana",
+        "Srinivas University, Mangalore, Karnataka",
+        "Amity University, Noida, Uttar Pradesh",
+        "Wings Aviation Academy, Bengaluru, Karnataka"
+    ]
+},
+
+"Bachelor of Science in Information Technology (B.Sc IT)": {
+    "skills": ["Programming", "Networking", "Database Management", "Software Development", "System Administration"],
+    "colleges": [
+        "University of Delhi, New Delhi, Delhi",
+        "Indraprastha University, New Delhi, Delhi",
+        "University of Mumbai, Mumbai, Maharashtra",
+        "Amity University, Noida, Uttar Pradesh",
+        "Banasthali University, Jaipur, Rajasthan",
+        "Loyola College, Chennai, Tamil Nadu"
+    ]
+},
+
+"Bachelor of Fine Arts (BFA)": {
+    "skills": ["Painting", "Sculpture", "Creative Design", "Drawing", "Art Theory", "Art History"],
+    "colleges": [
+        "Kala Bhavan, Visva Bharati University, Santiniketan, West Bengal",
+        "Jamia Millia Islamia, New Delhi, Delhi",
+        "Delhi College of Art, New Delhi, Delhi",
+        "Shri Krishna Arts and Science College, Coimbatore, Tamil Nadu",
+        "Bangalore University, Bengaluru, Karnataka",
+        "Sir J.J. School of Art, Mumbai, Maharashtra"
+    ]
+},
+"MBBS (Bachelor of Medicine, Bachelor of Surgery)": {
+    "skills": ["Medical Knowledge", "Critical Thinking", "Patient Care", "Surgical Skills", "Clinical Diagnosis", "Problem-solving"],
+    "colleges": [
+        "All India Institute of Medical Sciences (AIIMS), New Delhi, Delhi",
+        "King George's Medical University, Lucknow, Uttar Pradesh",
+        "Christian Medical College (CMC), Vellore, Tamil Nadu",
+        "St. John's Medical College, Bengaluru, Karnataka",
+        "Maulana Azad Medical College, New Delhi, Delhi",
+        "B.J. Medical College, Ahmedabad, Gujarat"
+    ]
+},
+
+"BDS (Bachelor of Dental Surgery)": {
+    "skills": ["Dental Skills", "Oral Care", "Surgical Skills", "Medical Knowledge", "Patient Interaction", "Problem-solving"],
+    "colleges": [
+        "Maulana Azad Institute of Dental Sciences, New Delhi, Delhi",
+        "Manipal College of Dental Sciences, Manipal, Karnataka",
+        "KLE Academy of Higher Education & Research, Belagavi, Karnataka",
+        "Bangalore Institute of Dental Sciences, Bengaluru, Karnataka",
+        "Dr. D.Y. Patil University, Navi Mumbai, Maharashtra",
+        "A.J. Institute of Dental Sciences, Mangalore, Karnataka"
+    ]
+},
+
+"BAMS (Bachelor of Ayurvedic Medicine and Surgery)": {
+    "skills": ["Ayurvedic Medicine", "Herbal Medicine", "Holistic Healing", "Diagnosis", "Patient Care", "Clinical Skills"],
+    "colleges": [
+        "National Institute of Ayurveda, Jaipur, Rajasthan",
+        "Banaras Hindu University, Varanasi, Uttar Pradesh",
+        "Govt. Ayurvedic College, Thiruvananthapuram, Kerala",
+        "Institute of Medical Sciences, BHU, Varanasi, Uttar Pradesh",
+        "Ayurvedic Medical College, Bengaluru, Karnataka",
+        "JSS Ayurveda Medical College, Mysuru, Karnataka"
+    ]
+},
+
+"BHMS (Bachelor of Homeopathic Medicine and Surgery)": {
+    "skills": ["Homeopathy", "Patient Care", "Alternative Medicine", "Diagnosis", "Clinical Skills", "Herbal Treatment"],
+    "colleges": [
+        "National Homeopathy Medical College, Kolkata, West Bengal",
+        "Dr. M.L. Dhawale Memorial Homeopathy College, Mumbai, Maharashtra",
+        "Bharati Vidyapeeth Deemed University, Pune, Maharashtra",
+        "Rajiv Gandhi University of Health Sciences, Bengaluru, Karnataka",
+        "National Institute of Homeopathy, Kolkata, West Bengal",
+        "Rajasthan University of Health Sciences, Jaipur, Rajasthan"
+    ]
+},
+
+"BUMS (Bachelor of Unani Medicine and Surgery)": {
+    "skills": ["Unani Medicine", "Diagnosis", "Herbal Treatments", "Patient Care", "Clinical Skills", "Alternative Medicine"],
+    "colleges": [
+        "National Institute of Unani Medicine, Bengaluru, Karnataka",
+        "Government Unani Medical College, Bengaluru, Karnataka",
+        "Aligarh Muslim University, Aligarh, Uttar Pradesh",
+        "Jamia Hamdard University, New Delhi, Delhi",
+        "University of Delhi, New Delhi, Delhi",
+        "Rajiv Gandhi University of Health Sciences, Bengaluru, Karnataka"
+    ]
+},
+
+"MBBS (Bachelor of Medicine, Bachelor of Surgery) - For Allied Health": {
+    "skills": ["Healthcare", "Surgical Skills", "Patient Care", "Medical Research", "Medical Technology"],
+    "colleges": [
+        "Apollo Institute of Medical Sciences and Research, Hyderabad, Telangana",
+        "Manipal University, Manipal, Karnataka",
+        "Amrita Vishwa Vidyapeetham, Kochi, Kerala",
+        "Sri Ramachandra Institute of Higher Education and Research, Chennai, Tamil Nadu",
+        "Sri Venkateswara Institute of Medical Sciences, Tirupati, Andhra Pradesh",
+        "M.S. Ramaiah Medical College, Bengaluru, Karnataka"
+    ]
+},
+
+"BOT (Bachelor of Occupational Therapy)": {
+    "skills": ["Therapeutic Techniques", "Healthcare", "Physical Therapy", "Patient Interaction", "Problem-solving"],
+    "colleges": [
+        "All India Institute of Medical Sciences (AIIMS), New Delhi, Delhi",
+        "National Institute for the Empowerment of Persons with Intellectual Disabilities, Secunderabad, Telangana",
+        "Sree Chitra Tirunal Institute for Medical Sciences and Technology, Thiruvananthapuram, Kerala",
+        "Manipal University, Manipal, Karnataka",
+        "University of Mumbai, Mumbai, Maharashtra",
+        "Rajiv Gandhi University of Health Sciences, Bengaluru, Karnataka"
+    ]
+},
+
+"BPT (Bachelor of Physiotherapy)": {
+    "skills": ["Physical Therapy", "Healthcare", "Diagnosis", "Patient Care", "Rehabilitation"],
+    "colleges": [
+        "All India Institute of Medical Sciences (AIIMS), New Delhi, Delhi",
+        "Manipal College of Allied Health Sciences, Manipal, Karnataka",
+        "Narayana Institute of Physiotherapy, Bengaluru, Karnataka",
+        "KLE University, Belagavi, Karnataka",
+        "Lovely Professional University, Jalandhar, Punjab",
+        "Dr. D.Y. Patil University, Navi Mumbai, Maharashtra"
+    ]
+},
+
+
+        };
+
+                let cart = [];
+
+        function findCourses() {
+            const input = document.getElementById('skills-input').value;
+            const skills = input.split(',').map(skill => skill.trim());
+            const matchedCourses = [];
+
+            for (const [course, data] of Object.entries(courses)) {
+                const matchingSkills = data.skills.filter(skill => skills.includes(skill));
+                if (matchingSkills.length >= 2) {
+                    matchedCourses.push(course);
+                }
+            }
+
+            displayCourses(matchedCourses);
+        }
+
+        function displayCourses(matchedCourses) {
+            const courseUl = document.getElementById('course-ul');
+            courseUl.innerHTML = '';
+            if (matchedCourses.length > 0) {
+                document.getElementById('courses-list').style.display = 'block';
+                matchedCourses.forEach(course => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<button onclick="displayColleges('${course}')">${course}</button>`;
+                    courseUl.appendChild(li);
+                });
+            } else {
+                alert("No matching courses found.");
+            }
+        }
+
+        function displayColleges(course) {
+            const collegeUl = document.getElementById('college-ul');
+            collegeUl.innerHTML = '';
+            const colleges = courses[course].colleges;
+
+            colleges.forEach(college => {
+                const li = document.createElement('li');
+                li.innerHTML = `${college} <button class="add-to-cart" onclick="addToCart('${college}')">Add to Cart</button>`;
+                collegeUl.appendChild(li);
+            });
+
+            document.getElementById('colleges-list').style.display = 'block';
+        }
+
+        function addToCart(college) {
+            if (!cart.includes(college)) {
+                cart.push(college);
+                updateCart();
+            } else {
+                alert('This item is already in your cart!');
+            }
+        }
+
+        function removeFromCart(college) {
+            const index = cart.indexOf(college);
+            if (index > -1) {
+                cart.splice(index, 1);
+                updateCart();
+            }
+        }
+
+        function updateCart() {
+            const cartUl = document.getElementById('cart-ul');
+            cartUl.innerHTML = '';
+            if (cart.length > 0) {
+                cart.forEach(college => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `${college} <span class="remove-item" onclick="removeFromCart('${college}')">X</span>`;
+                    cartUl.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.classList.add('empty-cart');
+                li.innerText = "Your cart is empty.";
+                cartUl.appendChild(li);
+            }
+        }
+
+        function toggleCart() {
+            const cartBox = document.getElementById('cart-box');
+            cartBox.style.display = cartBox.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

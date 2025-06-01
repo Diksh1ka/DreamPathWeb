@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamPath - Career Guidance</title>
+    <style>
+        /* General Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background-color: #bccad6;
+            color: #333;
+        }
+        h1, h2, h3, h4 {
+            color: #444;
+        }
+        button {
+            background-color: #667292;
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #8d9db6;
+        }
+
+        /* Header Section */
+        header {
+            background-color: #8d9db6;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            justify-content: space-between; /* Align left and right sections */
+            align-items: center;
+            padding: 3rem 2rem;
+            background-color: #bccad6;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .hero-left {
+            max-width: 50%; /* Make sure paragraph takes up half the space */
+            text-align: left;
+        }
+        .hero-left h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #667292;
+        }
+        .hero-left p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 2rem;
+        }
+        .hero-right {
+            max-width: 40%; /* Make the image container smaller than the text */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: flex-end; /* Align images to the right */
+        }
+        .hero-right img {
+            width: 48%; /* Adjust the width to fit the images side by side */
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Boxes Section Styling */
+        .boxes {
+            display: flex;
+            justify-content: space-around;
+            padding: 3rem 2rem;
+            background-color: #8d9db6;
+        }
+        .box {
+            background-color: #f1e3dd;
+            padding: 20px;
+            border-radius: 8px;
+            width: 30%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .box img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+        .box h4 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #667292;
+        }
+
+        /* Footer Section */
+        footer {
+            background-color: #667292;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            color: #f1e3dd;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="logo">DreamPath</div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-left">
+            <h1>For Your Career Guidance</h1>
+            <p>
+                Are you a student searching for the perfect career direction? Look no further! We specialize in providing you career guidance to help you make informed decisions regarding your courses and higher studies.<br>
+                At DreamPath, we understand that choosing the right career path can be overwhelming. With numerous options available and constantly changing industry trends, it’s easy to feel lost. That’s why we’ve designed a comprehensive guidance system to help you navigate your career choices with confidence.<br>
+                We believe that each individual has unique skills, interests, and dreams. Our personalized approach tailors advice based on your interests, and skills. Whether you’re interested in technology, business, healthcare, or the arts, our platform will provide you with tailored recommendations to help you explore the best options.
+            </p>
+        </div>
+        <div class="hero-right">
+            <img src="{{ url_for('static', filename='img11.jpg') }}" alt="Image 1">
+            <img src="{{ url_for('static', filename='img16.jpg') }}" alt="Image 2">
+            <img src="{{ url_for('static', filename='img15.jpg') }}" alt="Image 3">
+            <img src="{{ url_for('static', filename='img12.jpg') }}" alt="Image 4">
+        </div>
+    </section>
+
+    <!-- Boxes Section -->
+    <section class="boxes">
+        <div class="box">
+            <h4>10th Std Students</h4>
+            <p>Make informed decisions regarding your stream choices and career path.</p>
+            <img src="{{ url_for('static', filename='img14.jpg') }}" alt="10th Std Image">
+            <button onclick="window.location.href='career.html'">Explore</button>
+        </div>
+        <div class="box">
+            <h4>11th & 12th Std Students</h4>
+            <p>Find the best career path for your future goals and explore opportunities.</p>
+            <img src="{{ url_for('static', filename='img13.jpg') }}" alt="11th & 12th Std Image">
+            <button onclick="window.location.href='career11.html'">Explore</button>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>© 2024 DreamPath. All rights reserved.</p>
+    </footer>
+</body>
+</html>

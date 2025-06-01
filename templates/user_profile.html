@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>User Profile - DreamPath</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f1e3dd;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        /* Header Section */
+        header {
+            background-color: #8d9db6;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: black;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .home {
+            font-size: 1.2rem;
+            text-decoration: none;
+            color: black;
+        }
+        .home:hover {
+            color: #bccad6;
+        }
+
+        /* Welcome Message Section */
+        .welcome-message {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+        }
+        .welcome-message h3 {
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .welcome-message p {
+            line-height: 1.6;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        /* Profile and Image Container (Flexbox Layout) */
+        .content-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px auto;
+            width: 80%;
+        }
+
+        /* Profile Container */
+        .profile-container {
+            width: 45%;  /* Adjusted width */
+            background: #bccad6;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #667292;
+        }
+
+        /* Profile Item Styling */
+        .profile-item {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Label Styling */
+        .profile-item label {
+            font-weight: bold;
+            color: #8d9db6;
+            margin-bottom: 5px;
+            width: 100%;
+            display: inline-block;
+            text-align: left;
+        }
+
+        /* Input and Select Field Styling */
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 5px;
+            background-color: #f4f4f4;
+            border: 1px solid #8d9db6;
+            border-radius: 10px;  /* Rounded corners */
+            font-size: 1rem;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            background: #2193b0;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #0a7a95;
+        }
+
+        /* Image Styling */
+        .profile-image {
+            width: 100%;
+            max-width: 400px;  /* Limit max width */
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">DreamPath</div>
+        <a href="{{ url_for('home') }}" class="home">Home</a>
+    </header>
+
+    <!-- Welcome Message Section -->
+    <div class="welcome-message">
+        <h3>Welcome to DreamPath!</h3>
+        <p>We're excited to have you on board. At DreamPath, we help you navigate the journey toward your ideal career by providing personalized guidance and resources. Whether you're just starting out or looking to take the next step, we're here to support your aspirations. Please fill out your profile and let's work together to build your dream career!</p>
+    </div>
+
+    <!-- Content Container with Profile and Image -->
+    <div class="content-container">
+        <!-- Profile Container -->
+        <div class="profile-container">
+            <h2>User Profile</h2>
+            <form method="POST" onsubmit="submitProfileForm(); return false;">
+                <div class="profile-item">
+                    <label for="name">Enter Your Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Your Name" required />
+                </div>
+                <div class="profile-item">
+                    <label for="email">Enter Your Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Your Email" required />
+                </div>
+                <div class="profile-item">
+                    <label for="dob">Date of Birth:</label>
+                    <input type="date" id="dob" name="dob" required />
+                </div>
+                <div class="profile-item">
+                    <label for="gender">Gender:</label>
+                    <select id="gender" name="gender" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="profile-item">
+                    <label for="country">Country:</label>
+                    <input type="text" id="country" name="country" placeholder="Country" required />
+                </div>
+                <div class="profile-item">
+                    <label for="state">State:</label>
+                    <input type="text" id="state" name="state" placeholder="State" required />
+                </div>
+                <div class="profile-item">
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city" placeholder="City" required />
+                </div>
+                <button type="submit">Update Profile</button>
+            </form>
+        </div>
+
+        <!-- Profile Image Below the Paragraph -->
+        <div>
+            <img src="{{ url_for('static', filename='img100.jpg') }}" alt="Profile Image" class="profile-image" />
+        </div>
+    </div>
+
+    <script>
+        // Function to handle profile form submission
+        function submitProfileForm() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const dob = document.getElementById('dob').value;
+            const gender = document.getElementById('gender').value;
+            const country = document.getElementById('country').value;
+            const state = document.getElementById('state').value;
+            const city = document.getElementById('city').value;
+
+            if (!name || !email || !dob || !gender || !country || !state || !city) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            // Save user details in localStorage
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userDob', dob);
+            localStorage.setItem('userGender', gender);
+            localStorage.setItem('userCountry', country);
+            localStorage.setItem('userState', state);
+            localStorage.setItem('userCity', city);
+
+            // Redirect to interests page
+            window.location.href = "user_interests.html";
+        }
+    </script>
+</body>
+</html>

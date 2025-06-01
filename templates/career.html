@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Course Recommendations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1e3dd;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        label, input, button {
+            font-size: 1rem;
+            margin: 10px 0;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .courses-list, .colleges-list {
+            display: none;
+            margin-top: 20px;
+        }
+        .courses-list ul, .colleges-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .courses-list li, .colleges-list li {
+            margin-bottom: 10px;
+        }
+        .add-to-cart {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .add-to-cart:hover {
+            background-color: #0056b3;
+        }
+
+        /* Header Section */
+        header {
+            background-color: #bccad6;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667292;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav ul li a {
+            font-size: 1rem;
+            color: #667292;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #4CAF50;
+        }
+
+        /* Cart Section */
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #007bff;
+        }
+
+        .cart-box {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 200px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-box ul {
+            list-style: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .cart-box li {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cart-box .empty-cart {
+            text-align: center;
+            font-style: italic;
+            color: #888;
+        }
+
+        /* Red "X" button */
+        .remove-item {
+            color: red;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">DreamPath</div>
+        <div class="cart-icon" onclick="toggleCart()">🛒</div>
+        <div class="cart-box" id="cart-box">
+            <h3>Your Cart</h3>
+            <ul id="cart-ul">
+                <li class="empty-cart">Your cart is empty.</li>
+            </ul>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>Career Course Finder</h1>
+        <label for="skills-input">Enter Your Skills and Interests (separated by commas):</label>
+        <input type="text" id="skills-input" placeholder="e.g., Problem-solving, Logical-thinking, Science, Technology">
+        <button onclick="findCourses()">Submit</button>
+
+        <div class="courses-list" id="courses-list">
+            <h2>Recommended Courses</h2>
+            <ul id="course-ul"></ul>
+        </div>
+
+        <div class="colleges-list" id="colleges-list">
+            <h2>Colleges for Selected Course</h2>
+            <ul id="college-ul"></ul>
+        </div>
+    </div>
+
+
+    <script>
+        const courses = {
+            "Science Stream (PCM/PCB/PCMB)": {
+                skills: ["Biology","Botany", "Maths", "Zoology","Chemistry", "Physics","Computer", "Computer Science", "Science", "Technology", "Experiments"],
+                colleges: [
+                    "Vasant Valley School, New Delhi",
+                    "St. Xavier's College, Mumbai",
+                    "The Cathedral and John Connon School, Mumbai",
+                    "Kendriya Vidyalaya, New Delhi",
+                    "Birla High School, Kolkata",
+		    "Narayana PU College, India",
+		    "Sri Chaitanya PU College, India",
+                    "D.A.V. Public School, Patna"
+                ]
+            },
+            "Commerce Stream": {
+                skills: ["Analytical", "Commerce", "Numerical", "Organization", "Business", "Finance", "Economics"],
+                colleges: [
+                    "SIES College of Arts, Science & Commerce, Mumbai",
+                    "St. Xavier's College, Mumbai",
+                    "H.R. College of Commerce and Economics, Mumbai",
+                    "LSR College, New Delhi",
+                    "Shri Ram College of Commerce, New Delhi",
+                    "M.O.P. Vaishnav College, Chennai"
+                ]
+            },
+            "Arts/Humanities Stream": {
+                skills: ["Creativity", "Communication", "Critical-thinking", "History", "Society", "Writing"],
+                colleges: [
+                    "Jadavpur University, Kolkata",
+                    "St. Xavier's College, Mumbai",
+                    "Loyola College, Chennai",
+                    "Hindu College, New Delhi",
+                    "Lady Shri Ram College, New Delhi",
+                    "Presidency College, Chennai"
+                ]
+            },
+            "Engineering Diploma (Polytechnic)": {
+                skills: ["Technical", "Practical", "Machines","Buildings", "Machines", "Technology", "Construction"],
+                colleges: [
+                    "R R Polytechnic, Bengaluru",
+                    "Government Polytechnic College, Pune",
+                    "Pune Institute of Computer Technology, Pune",
+                    "Dr. D.Y. Patil Institute of Engineering, Pune",
+                    "B.P. Poddar Institute of Management and Technology, Kolkata",
+                    "Government Polytechnic, Mumbai"
+                ]
+            },
+            "Diploma in Pharmacy (D.Pharm)": {
+                skills: ["Precision", "Detail-oriented", "Organization", "Healthcare", "Medicine", "Chemistry"],
+                colleges: [
+                    "Bombay College of Pharmacy, Mumbai",
+                    "R R College of Pharmacy, Bengaluru",
+                    "National College of Pharmacy, Bengaluru",
+                    "Padmashree Institute of Management and Sciences, Bengaluru",
+                    "NIMS University, Jaipur",
+                    "KLE University College of Pharmacy, Belagavi"
+                ]
+            },
+            // Add more courses as needed...
+		"Diploma in Design (Fashion, Interior, etc.)": {
+    "skills": ["Creativity", "Imagination", "Visualization", "Fashion", "Art", "Aesthetics", "Drawing", "Sketching", "Painting"],
+    "colleges": [
+        "National Institute of Design, Ahmedabad, Gujarat",
+        "Pearl Academy, New Delhi, Delhi",
+        "R R Institute of Advanced Studies, Bengaluru, Karnataka",
+        "JD Institute of Fashion Technology, New Delhi, Delhi",
+        "Arch Academy of Design, Jaipur, Rajasthan",
+        "Symbiosis Institute of Design, Pune, Maharashtra"
+    ]
+},
+"Diploma in Hotel Management": {
+    "skills": ["Communication", "Management", "Teamwork", "Hospitality", "Cooking", "Tourism"],
+    "colleges": [
+        "Institute of Hotel Management, Mumbai, Maharashtra",
+        "R R Institute of Hotel Management, Bengaluru, Karnataka",
+        "Welcomgroup Graduate School of Hotel Administration, Manipal, Karnataka",
+        "Institute of Hotel Management, Chandigarh, Punjab",
+        "D.Y. Patil International University, Pune, Maharashtra",
+        "Oberoi Centre of Learning and Development, New Delhi, Delhi"
+    ]
+},
+"ITI (Industrial Training Institute) Courses": {
+    "skills": ["Practical", "Technical", "Hands-on", "Mechanics", "Repairs", "Crafts"],
+    "colleges": [
+        "Industrial Training Institute (ITI), New Delhi, Delhi",
+        "Government ITI, Pune, Maharashtra",
+        "ITI College, Kolkata, West Bengal",
+        "Government ITI, Bengaluru, Karnataka",
+        "State Council for Vocational Training, Haryana, India",
+        "Government ITI, Jaipur, Rajasthan"
+    ]
+},
+"Retail Management": {
+    "skills": ["Customer-service", "Organization", "Sales", "Marketing", "Business", "Communication"],
+    "colleges": [
+        "R R Institute of Management Studies, Bengaluru, Karnataka",
+        "Amity University, Noida, Uttar Pradesh",
+        "Welingkar Institute of Management, Mumbai, Maharashtra",
+        "Institute of Retail Management, Mumbai, Maharashtra",
+        "Pearl Academy, New Delhi, Delhi",
+        "MIT School of Business, Pune, Maharashtra"
+    ]
+},
+"Beauty and Wellness": {
+    "skills": ["Precision", "Beauty", "Creativity", "Detail-oriented", "Skincare", "Fashion", "Makeup"],
+    "colleges": [
+        "VLCC Institute of Beauty and Nutrition, New Delhi, Delhi",
+        "Lakmé Academy, New Delhi, Delhi",
+        "Pearl Academy, New Delhi, Delhi",
+        "Jd Institute of Fashion Technology, New Delhi, Delhi",
+        "K11 Academy of Fitness Sciences, Mumbai, Maharashtra",
+        "The Beauty Academy, Mumbai, Maharashtra"
+    ]
+},
+"Diploma in Medical Laboratory Technology (DMLT)": {
+    "skills": ["Accuracy", "Focus", "Precision", "Biology", "Healthcare", "Diagnostics"],
+    "colleges": [
+        "R R Institute of Medical Sciences, Bengaluru, Karnataka",
+        "Christian Medical College, Vellore, Tamil Nadu",
+        "St. John's Medical College, Bengaluru, Karnataka",
+        "Amity Institute of Medical Sciences, Noida, Uttar Pradesh",
+        "NIMS University, Jaipur, Rajasthan",
+        "Dr. D.Y. Patil University, Pune, Maharashtra"
+    ]
+},
+"Emergency Medical Technician": {
+    "skills": ["Quick-thinking", "Stamina", "Focus", "Medicine", "Emergency", "Healthcare"],
+    "colleges": [
+        "R R Institute of Medical Sciences, Bengaluru, Karnataka",
+        "All India Institute of Medical Sciences (AIIMS), New Delhi, Delhi",
+        "St. John Ambulance, New Delhi, Delhi",
+        "NIMS University, Jaipur, Rajasthan",
+        "Government Medical College, Nagpur, Maharashtra",
+        "Manipal University, Manipal, Karnataka"
+    ]
+},
+"Animation and Multimedia": {
+    "skills": ["Creativity", "Technical", "Imagination", "Animation", "Art", "Design", "Drawing"],
+    "colleges": [
+        "National Institute of Design, Ahmedabad, Gujarat",
+        "Arena Animation, New Delhi, Delhi",
+        "Maya Academy of Advanced Cinematics, New Delhi, Delhi",
+        "Image College of Arts, Animation and Technology, Chennai, Tamil Nadu",
+        "Jadavpur University, Kolkata, West Bengal",
+        "Wigan & Leigh College, New Delhi, Delhi"
+    ]
+},
+"Performing Arts (Dance, Music, Theater)": {
+    "skills": ["Discipline", "Expression", "Creativity", "Music", "Acting", "Dance", "Dancing", "Singing"],
+    "colleges": [
+        "National Institute of Performing Arts, New Delhi, Delhi",
+        "Shiamak Davar International, Mumbai, Maharashtra",
+        "Bharatiya Vidya Bhavan, New Delhi, Delhi",
+        "Drama School Mumbai, Mumbai, Maharashtra",
+        "Sriram Bharatiya Kala Kendra, New Delhi, Delhi",
+        "National School of Drama, New Delhi, Delhi"
+    ]
+},
+"Courses in Physical Education and Sports Coaching": {
+    "skills": ["Fitness", "Leadership", "Teamwork", "Sports", "Coaching", "Athletics"],
+    "colleges": [
+        "Lakshmibai National Institute of Physical Education, Gwalior, Madhya Pradesh",
+        "National Institute of Sports, Patiala, Punjab",
+        "Tata Institute of Social Sciences, Mumbai, Maharashtra",
+        "Guru Nanak Dev University, Amritsar, Punjab",
+        "St. Xavier’s College, Kolkata, West Bengal",
+        "Amity University, Noida, Uttar Pradesh"
+    ]
+},
+"Diploma in Yoga": {
+    "skills": ["Focus", "Discipline", "Patience", "Fitness", "Health", "Meditation"],
+    "colleges": [
+        "The Yoga Institute, Mumbai, Maharashtra",
+        "Bihar School of Yoga, Munger, Bihar",
+        "SVYASA Yoga University, Bengaluru, Karnataka",
+        "Patanjali International Yoga Foundation, Haridwar, Uttarakhand",
+        "International Centre for Yoga Education and Research, Chennai, Tamil Nadu",
+        "Kaivalyadhama Institute of Yoga, Lonavala, Maharashtra"
+    ]
+},
+"Certificate in Programming (Python, Java, etc.)": {
+    "skills": ["C", "C++", "Python", "Java", "Logical-thinking", "Coding", "Problem-solving", "Computers", "Software", "Algorithms"],
+    "colleges": [
+        "NIIT, New Delhi, Delhi",
+        "Aptech, Mumbai, Maharashtra",
+        "TalentSprint, Hyderabad, Telangana",
+        "Red Hat Academy, Pune, Maharashtra",
+        "Codeacademy Academy, New Delhi, Delhi",
+        "Simplilearn, Bengaluru, Karnataka"
+    ]
+},
+"Web Development and Designing": {
+    "skills": ["Coding", "Frontend", "HTML", "CSS", "Python", "Design", "Creativity", "Websites", "Technology", "UI/UX", "Web Development", "Designing"],
+    "colleges": [
+        "Arena Animation, New Delhi, Delhi",
+        "Aptech, Mumbai, Maharashtra",
+        "Web Designing Academy, Bengaluru, Karnataka",
+        "National Institute of Design, Ahmedabad, Gujarat",
+        "Wigan & Leigh College, New Delhi, Delhi",
+        "UpGrad, Bengaluru, Karnataka"
+    ]
+},
+"Cybersecurity Basics": {
+    "skills": ["Problem-solving", "Analytical", "Critical-thinking", "Security", "Networks", "Systems", "Cybersecurity"],
+    "colleges": [
+        "Indian School of Ethical Hacking, Kolkata, West Bengal",
+        "National Institute of Electronics & Information Technology, New Delhi, Delhi",
+        "Simplilearn, Bengaluru, Karnataka",
+        "EC-Council, New Delhi, Delhi",
+        "TalentedIT, Hyderabad, Telangana",
+        "TCS iON, Mumbai, Maharashtra"
+    ]
+}
+
+        };
+
+        let cart = [];
+
+        function findCourses() {
+            const input = document.getElementById('skills-input').value;
+            const skills = input.split(',').map(skill => skill.trim());
+            const matchedCourses = [];
+
+            for (const [course, data] of Object.entries(courses)) {
+                const matchingSkills = data.skills.filter(skill => skills.includes(skill));
+                if (matchingSkills.length >= 2) {
+                    matchedCourses.push(course);
+                }
+            }
+
+            displayCourses(matchedCourses);
+        }
+
+        function displayCourses(matchedCourses) {
+            const courseUl = document.getElementById('course-ul');
+            courseUl.innerHTML = '';
+            if (matchedCourses.length > 0) {
+                document.getElementById('courses-list').style.display = 'block';
+                matchedCourses.forEach(course => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<button onclick="displayColleges('${course}')">${course}</button>`;
+                    courseUl.appendChild(li);
+                });
+            } else {
+                alert("No matching courses found.");
+            }
+        }
+
+        function displayColleges(course) {
+            const collegeUl = document.getElementById('college-ul');
+            collegeUl.innerHTML = '';
+            const colleges = courses[course].colleges;
+
+            colleges.forEach(college => {
+                const li = document.createElement('li');
+                li.innerHTML = `${college} <button class="add-to-cart" onclick="addToCart('${college}')">Add to Cart</button>`;
+                collegeUl.appendChild(li);
+            });
+
+            document.getElementById('colleges-list').style.display = 'block';
+        }
+
+        function addToCart(college) {
+            if (!cart.includes(college)) {
+                cart.push(college);
+                updateCart();
+            } else {
+                alert('This item is already in your cart!');
+            }
+        }
+
+        function removeFromCart(college) {
+            const index = cart.indexOf(college);
+            if (index > -1) {
+                cart.splice(index, 1);
+                updateCart();
+            }
+        }
+
+        function updateCart() {
+            const cartUl = document.getElementById('cart-ul');
+            cartUl.innerHTML = '';
+            if (cart.length > 0) {
+                cart.forEach(college => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `${college} <span class="remove-item" onclick="removeFromCart('${college}')">X</span>`;
+                    cartUl.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.classList.add('empty-cart');
+                li.innerText = "Your cart is empty.";
+                cartUl.appendChild(li);
+            }
+        }
+
+        function toggleCart() {
+            const cartBox = document.getElementById('cart-box');
+            cartBox.style.display = cartBox.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>

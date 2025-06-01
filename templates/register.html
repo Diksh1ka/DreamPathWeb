@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - DreamPath</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            background-color: #f1e3dd; /* Light background color */
+            color: #333;
+        }
+
+        /* Header Section */
+        header {
+            background-color: #bccad6; /* Soft blue for header */
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+        nav ul li a {
+            color: #333;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+        nav ul li a:hover {
+            color: #007acc;
+        }
+
+        /* Main Section */
+        .main-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - 60px);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #8d9db6; /* Soft grey-blue background for the main section */
+        }
+        .image-container {
+            margin-right: 50px;
+            width: 50%;
+        }
+        .image-container img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            width: 400px;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #667292; /* Light muted blue for the heading */
+        }
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        button {
+            width: 100%;
+            background-color: #007acc;
+            color: #fff;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #005f99;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            color: #007acc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .image-container {
+                width: 100%;
+                margin: 0 0 20px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="nav-bar">
+            <div class="logo">DreamPath</div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <div class="main-container">
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='img6.jpg') }}" alt="Sign Up Illustration">
+
+        </div>
+        <div class="container">
+            <h2>Create an Account</h2>
+             <form action="{{ url_for('register') }}" method="POST">
+                <input type="text" name="full_name" placeholder="Full Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+                <button type="submit">Sign Up</button>
+                <a href="{{ url_for('login') }}">Already have an account? Login</a>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        // Get the form data
+        const fullName = document.querySelector('input[name="full_name"]').value;
+        const email = document.querySelector('input[name="email"]').value;
+        const password = document.querySelector('input[name="password"]').value;
+        const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+
+        // Validation logic (basic example)
+        if (password !== confirmPassword) {
+            alert('Passwords do not match!');
+            return;
+        }
+
+        // Process the form data (e.g., send it to the backend)
+        // If successful, redirect to the login page
+        window.location.href = "{{ url_for('login') }}";
+    });
+    </script>
+</body>
+</html>
