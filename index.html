@@ -1,0 +1,227 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamPath - Career Guidance</title>
+    <style>
+        /* General Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background-color: #f1e3dd; /* Light beige */
+            color: #333;
+        }
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+        h1, h2, h3 {
+            color: #444;
+        }
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #388e3c;
+        }
+
+        /* Header Section */
+        header {
+            background-color: #bccad6; /* Soft blue-gray */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #000000;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+        }
+        nav ul li a {
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+        nav ul li a:hover {
+            color: #0077b6;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: #8d9db6; /* Dusty blue */
+            text-align: center;
+            padding: 3rem 1.5rem;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #00134d;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: #000d33;
+            margin-bottom: 2rem;
+        }
+
+        /* About Section */
+        .about {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background-color: #f1e3dd; /* Light beige */
+        }
+        .about h2 {
+            margin-bottom: 1rem;
+            color: #000d33;
+            font-size: 2rem;
+        }
+        .about p {
+            font-size: 1rem;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Rest Sections (Kept Same) */
+        .career-guidance, .how-help, .benefit, .career-path {
+            text-align: center;
+            padding: 3rem 1.5rem;
+        }
+        .career-guidance h2, .how-help h3, .benefit h3, .career-path h3 {
+            color: #444;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        .cards, .benefit-boxes {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .card, .box {
+            background: #ffffff;
+            padding: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 300px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .card:hover, .box:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #667292; /* Muted blue-gray */
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="nav-bar">
+            <div class="logo">DreamPath</div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#benefit">Support</a></li>
+		    <li><a href="{{ url_for('login') }}">Login</a></li>
+		    <li><a href="{{ url_for('register') }}">Sign up</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1> For Your Career Guidance, Your Dream Path</h1>
+        <p>Unlock your potential and discover the right career path for you.<br>
+At DreamPath, we believe every individual has unique talents and aspirations, and our mission is to guide you at every step of your journey.
+<br>
+Let’s take the first step toward your dream career—together.</p>
+    <img src="{{ url_for('static', filename='img2.webp') }}" alt="DreamPath Career Guidance" style="width: 100%; max-width: 800px; margin-top: 2rem; border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <h2>About DreamPath</h2>
+        <p>
+            DreamPath is your ultimate guide to career success, designed exclusively for students in grades 10, 11, and 12. 
+            At this crucial stage, making the right academic and career choices is essential for a bright future. 
+            DreamPath simplifies this process by analyzing your unique skills and suggesting the most suitable career 
+            courses tailored to your abilities and interests.
+        </p>
+        <ul style="text-align: left; max-width: 800px; margin: 1.5rem auto; line-height: 1.8;">
+            <li><strong>Understand Your Strengths:</strong> By assessing your skills and natural talents, DreamPath identifies areas where you can excel.</li>
+            <li><strong>Suggest Career-Oriented Courses:</strong> Based on your abilities, we provide recommendations for courses that align with your career aspirations.</li>
+            <li><strong>Provide Clarity:</strong> Eliminate confusion and focus on a clear path forward, ensuring you make well-informed decisions for your future.</li>
+            <li><strong>Support Subject Selection:</strong> Help you choose the right academic stream to pave the way for your career goals.</li>
+        </ul>
+        <p>
+            DreamPath is not about generic advice; it’s a personalized platform dedicated to helping you make decisions 
+            that match your potential. Whether you’re interested in science, arts, commerce, or creative fields, 
+            DreamPath empowers you with the information needed to chart a successful career course.
+        </p>
+        <p>
+            Your future is unique, and so is our guidance. Let DreamPath lead you to a career that reflects your true potential and passion!
+        </p>
+    </section>
+
+    <!-- Who Can Benefit Section -->
+    <section class="benefit" id="benefit">
+        <h3>Who can benefit from DreamPath</h3>
+        <div class="benefit-boxes">
+            <div class="box">
+                <h4>For Class 10</h4>
+                <p>Confused about subjects? We will help you identify the right ones.</p>
+            </div>
+            <div class="box">
+                <h4>For Class 11 & 12</h4>
+                <p>Confused about career options? Let us find the best fit for you.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Career Path Section -->
+    <section class="career-path">
+        <h3>Know more about your Career Path</h3>
+        <p>Unlock your potential by discovering your passions, mapping out your career journey, and finding educational opportunities that align with your goals.</p>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-content">
+            <p>© 2024 DreamPath. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
